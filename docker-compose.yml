@@ -54,9 +54,9 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: wlstjd12
       MYSQL_DATABASE: test_db
-
+      
     depends_on:
-      - png-mysql-test-master
+      - mysql-master
     command: --server-id=2
 
   phpmyadmin:
