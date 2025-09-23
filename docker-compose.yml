@@ -12,7 +12,7 @@ services:
     depends_on:
       - webserver1
       - webserver2
- 
+  
   webserver1:
     build: ./bin/webserver
     container_name: webserver1  
@@ -42,7 +42,7 @@ services:
       MYSQL_HOST: '%'
     command: --server-id=1 --log-bin=mysql-bin --binlog-do-db=test_db
 
-  mysql-slvae:
+  mysql-slave:
     build: ./bin/mysql
     container_name: 'png-mysql-test-slave'
     ports:
@@ -54,17 +54,19 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: wlstjd12
       MYSQL_DATABASE: test_db
+      MYSQL_USER: 'replica_user'
+      MYSQL_PASSWORD: 'replica_password'
       
     depends_on:
       - mysql-master
-    command: --server-id=2
+    command: --server-id=2 --relay-log=relay-bin --log-slave-updates=1 --binlog-do-db=test_db
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: phpmyadmin
     restart: always
     ports:
-      - "8080:80"  # http://localhost:8080 으로 접속 가능
+      - "8080:80"
     environment:
       PMA_HOST: mysql
       PMA_PORT: 3306
@@ -82,7 +84,6 @@ services:
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
     
-  # Grafana 대시보드 컨테이너
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
@@ -90,5 +91,3 @@ services:
       - "3000:3000"
     depends_on:
       - prometheus
-
-
