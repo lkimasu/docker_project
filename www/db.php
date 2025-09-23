@@ -1,6 +1,6 @@
 <?php
     
-	$db = new mysqli("png-mysql-test","root","wlstjd12","test_db"); 
+	$db = new mysqli("png-mysql-test-master","root","wlstjd12","test_db"); 
 	$db->set_charset("utf8");
 
 	if($db -> connect_error){

@@ -25,18 +25,39 @@ services:
     volumes:
       - ./www:/var/www/html/
 
-  mysql:
+  mysql-master:
     build: ./bin/mysql
-    container_name: 'png-mysql-test'
+    container_name: 'png-mysql-test-master'
     ports:
       - "3306:3306"
     volumes:
-      - ./data/mysql:/var/lib/mysql
-      - ./logs/mysql:/var/log/mysql
+      - ./data/mysql_master:/var/lib/mysql
+      - ./logs/mysql_master:/var/log/mysql
       - ./data/initdb:/docker-entrypoint-initdb.d
     environment:
       MYSQL_ROOT_PASSWORD: wlstjd12
       MYSQL_DATABASE: test_db
+      MYSQL_USER: 'replica_user'
+      MYSQL_PASSWORD: 'replica_password'
+      MYSQL_HOST: '%'
+    command: --server-id=1 --log-bin=mysql-bin --binlog-do-db=test_db
+
+  mysql-slvae:
+    build: ./bin/mysql
+    container_name: 'png-mysql-test-slave'
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./data/mysql_slave:/var/lib/mysql
+      - ./logs/mysql_slave:/var/log/mysql
+      - ./data/initdb:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_ROOT_PASSWORD: wlstjd12
+      MYSQL_DATABASE: test_db
+
+    depends_on:
+      - png-mysql-test-master
+    command: --server-id=2
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
