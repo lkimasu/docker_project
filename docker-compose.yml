@@ -15,16 +15,12 @@ services:
  
   webserver1:
     build: ./bin/webserver
-    ports: 
-      - "80:80"
     container_name: webserver1  
     volumes:
       - ./www:/var/www/html/
 
   webserver2:
     build: ./bin/webserver
-    ports: 
-      - "80:80"
     container_name: webserver2  
     volumes:
       - ./www:/var/www/html/
@@ -61,7 +57,7 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./data/prometheus:/etc/prometheus/prometheus.yml
+      - ./data/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
     

@@ -1,0 +1,20 @@
+global:
+  scrape_interval: 15s # 데이터를 수집하는 주기
+
+scrape_configs:
+  # Prometheus 자체 모니터링
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # 웹서버 컨테이너 모니터링
+  - job_name: 'webserver'
+    static_configs:
+      - targets: ['webserver1:9100', 'webserver2:9100']
+    metrics_path: /metrics
+
+  # MySQL 컨테이너 모니터링
+  - job_name: 'mysql'
+    static_configs:
+      - targets: ['mysql1:9104']
+    metrics_path: /metrics
