@@ -1,0 +1,77 @@
+version: "3"
+
+services:
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./data/nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - webserver1
+      - webserver2
+ 
+  webserver1:
+    build: ./bin/webserver
+    ports: 
+      - "80:80"
+    container_name: webserver1  
+    volumes:
+      - ./www:/var/www/html/
+
+  webserver2:
+    build: ./bin/webserver
+    ports: 
+      - "80:80"
+    container_name: webserver2  
+    volumes:
+      - ./www:/var/www/html/
+
+  mysql:
+    build: ./bin/mysql
+    container_name: 'png-mysql-test'
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+      - ./logs/mysql:/var/log/mysql
+      - ./data/mysql:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_ROOT_PASSWORD: wlstjd12
+      MYSQL_DATABASE: test_db
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: always
+    ports:
+      - "8080:80"  # http://localhost:8080 으로 접속 가능
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      UPLOAD_LIMIT: 100M
+    depends_on:
+      - mysql
+  
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./data/prometheus:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    
+  # Grafana 대시보드 컨테이너
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+
+

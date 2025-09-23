@@ -1,0 +1,12 @@
+CREATE DATABASE IF NOT EXISTS test_db;
+USE test_db;
+
+CREATE TABLE `board` 
+( `idx` INT NOT NULL AUTO_INCREMENT , 
+`name` VARCHAR(100) NOT NULL , 
+`pw` VARCHAR(100) NOT NULL , 
+`title` VARCHAR(100) NOT NULL , 
+`content` TEXT NOT NULL , 
+`date` DATE NOT NULL , 
+`hit` INT NOT NULL , 
+PRIMARY KEY (`idx`));
