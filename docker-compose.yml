@@ -40,7 +40,7 @@ services:
       MYSQL_USER: 'replica_user'
       MYSQL_PASSWORD: 'replica_password'
       MYSQL_HOST: '%'
-    command: --server-id=1 --log-bin=mysql-bin --binlog-do-db=test_db
+    command: --server-id=1 --log-bin=mysql-bin --binlog-do-db=test_db --default-authentication-plugin=mysql_native_password
 
   mysql-slave:
     build: ./bin/mysql
@@ -59,7 +59,7 @@ services:
       
     depends_on:
       - mysql-master
-    command: --server-id=2 --relay-log=relay-bin --log-slave-updates=1 --binlog-do-db=test_db
+    command: --server-id=2 --relay-log=relay-bin --log-slave-updates=1 --binlog-do-db=test_db --default-authentication-plugin=mysql_native_password
 
   
   prometheus:
