@@ -61,18 +61,6 @@ services:
       - mysql-master
     command: --server-id=2 --relay-log=relay-bin --log-slave-updates=1 --binlog-do-db=test_db
 
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    container_name: phpmyadmin
-    restart: always
-    ports:
-      - "8080:80"
-    environment:
-      PMA_HOST: mysql
-      PMA_PORT: 3306
-      UPLOAD_LIMIT: 100M
-    depends_on:
-      - mysql-master
   
   prometheus:
     image: prom/prometheus:latest
