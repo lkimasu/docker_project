@@ -70,7 +70,7 @@ services:
       PMA_PORT: 3306
       UPLOAD_LIMIT: 100M
     depends_on:
-      - mysql
+      - mysql-master
   
   prometheus:
     image: prom/prometheus:latest
