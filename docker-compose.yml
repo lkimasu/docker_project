@@ -15,13 +15,13 @@ services:
   
   webserver1:
     build: ./bin/webserver
-    container_name: webserver1  
+    container_name: webserver1 
     volumes:
       - ./www:/var/www/html/
 
   webserver2:
     build: ./bin/webserver
-    container_name: webserver2  
+    container_name: webserver2 
     volumes:
       - ./www:/var/www/html/
 
@@ -60,8 +60,7 @@ services:
     depends_on:
       - mysql-master
     command: --server-id=2 --relay-log=relay-bin --log-slave-updates=1 --binlog-do-db=test_db --default-authentication-plugin=mysql_native_password
-
-  
+ 
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
