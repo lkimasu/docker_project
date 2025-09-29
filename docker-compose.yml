@@ -75,7 +75,7 @@ services:
       - "9104:9104"
     environment:
       # Exporter가 마스터 DB에 접속하여 지표를 가져오도록 설정
-      DATA_SOURCE_NAME: 'replica_user:replica_password@(mysql-master:3306)/'
+      DATA_SOURCE_NAME: 'replica_user:replica_password@(png-mysql-test-master:3306)/'
     depends_on:
       - mysql-master
     restart: unless-stopped
@@ -87,7 +87,7 @@ services:
       - "9105:9104"
     environment:
       # Exporter가 슬레이브 DB에 접속하여 지표를 가져오도록 설정
-      DATA_SOURCE_NAME: 'replica_user:replica_password@(mysql-slave:3306)/'
+      DATA_SOURCE_NAME: 'replica_user:replica_password@(png-mysql-test-slave:3306)/'
     depends_on:
       - mysql-slave
     restart: unless-stopped  
