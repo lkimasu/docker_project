@@ -74,23 +74,30 @@ services:
     ports:
       - "9104:9104"
     environment:
-      # Exporter가 마스터 DB에 접속하여 지표를 가져오도록 설정
-      DATA_SOURCE_NAME: 'replica_user:replica_password@(png-mysql-test-master:3306)/'
+      # **필수 수정:** 명시적인 환경 변수 사용
+      MYSQL_EXPORTER_USER: replica_user
+      MYSQL_EXPORTER_PASSWORD: replica_password
+      DATA_SOURCE_NAME: $(MYSQL_EXPORTER_USER):$(MYSQL_EXPORTER_PASSWORD)@(mysql-master:3306)/
+      # 이전 DATA_SOURCE_NAME 설정은 Exporter 이미지에 따라 인식이 안될 수 있습니다.
     depends_on:
       - mysql-master
     restart: unless-stopped
 
+  # 2. MySQL 슬레이브 익스포터
   mysql_exporter_slave:
     image: prom/mysqld-exporter:latest
     container_name: mysql_exporter_slave
     ports:
       - "9105:9104"
     environment:
-      # Exporter가 슬레이브 DB에 접속하여 지표를 가져오도록 설정
-      DATA_SOURCE_NAME: 'replica_user:replica_password@(png-mysql-test-slave:3306)/'
+      # **필수 수정:** 명시적인 환경 변수 사용
+      MYSQL_EXPORTER_USER: replica_user
+      MYSQL_EXPORTER_PASSWORD: replica_password
+      DATA_SOURCE_NAME: $(MYSQL_EXPORTER_USER):$(MYSQL_EXPORTER_PASSWORD)@(mysql-slave:3306)/
+      # 슬레이브 DB 연결 시 서비스 이름 'mysql-slave' 사용 (내부 포트 3306)
     depends_on:
       - mysql-slave
-    restart: unless-stopped  
+    restart: unless-stopped
 
   # 2. 시스템 지표 수집 (CPU, 메모리, 디스크 등)
   # 호스트 OS의 지표를 수집합니다.
