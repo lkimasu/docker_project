@@ -1,6 +1,15 @@
 global:
   scrape_interval: 15s # 데이터를 수집하는 주기
+  scrape_timeout: 15s # scrap request 가 timeout 나는 길이
+  evaluation_interval: "2m" # rule을 얼마나 빈번하게 검증하는지
+  
+  external_labels:
+    monitor: 'test-monitor'       # 기본적으로 붙여줄 라벨
+  query_log_file: query_log_file.log
 
+rule_files:
+  - "rule.yml"  # 파일 위치는 prometheus.yml 이 있는 곳과 동일 위치
+  
 scrape_configs:
   # Prometheus 자체 모니터링
   - job_name: 'prometheus'
@@ -8,13 +17,13 @@ scrape_configs:
       - targets: ['localhost:9090']
 
   # 웹서버 컨테이너 모니터링
-  - job_name: 'webserver'
+  - job_name: 'node_exporter'
     static_configs:
-      - targets: ['webserver1:9100', 'webserver2:9100']
+      - targets: ['node_exporter:9100']
     metrics_path: /metrics
 
   # MySQL 컨테이너 모니터링
   - job_name: 'mysql'
     static_configs:
-      - targets: ['mysql1:9104']
+      - targets: ['mysql_exporter_master:9104',mysql_exporter_slave:9105]
     metrics_path: /metrics

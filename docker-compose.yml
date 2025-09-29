@@ -62,6 +62,48 @@ services:
     depends_on:
       - mysql-master
     command: --server-id=2 --relay-log=relay-bin --log-slave-updates=1 --binlog-do-db=test_db --default-authentication-plugin=mysql_native_password
+
+  # ==================================
+  # 모니터링 Exporter 서비스 추가
+  # ==================================
+
+  # 1. MySQL 지표 수집 (복제 상태, 쿼리 등)
+  mysql_exporter_master:
+    image: prom/mysqld-exporter:latest
+    container_name: mysql_exporter_master
+    ports:
+      - "9104:9104"
+    environment:
+      # Exporter가 마스터 DB에 접속하여 지표를 가져오도록 설정
+      DATA_SOURCE_NAME: 'replica_user:replica_password@(mysql-master:3306)/'
+    depends_on:
+      - mysql-master
+    restart: unless-stopped
+
+  mysql_exporter_slave:
+    image: prom/mysqld-exporter:latest
+    container_name: mysql_exporter_slave
+    ports:
+      - "9105:9104"
+    environment:
+      # Exporter가 슬레이브 DB에 접속하여 지표를 가져오도록 설정
+      DATA_SOURCE_NAME: 'replica_user:replica_password@(mysql-slave:3306)/'
+    depends_on:
+      - mysql-slave
+    restart: unless-stopped  
+
+  # 2. 시스템 지표 수집 (CPU, 메모리, 디스크 등)
+  # 호스트 OS의 지표를 수집합니다.
+  node_exporter:
+    image: prom/node-exporter:latest
+    container_name: node_exporter
+    command:
+      - '--path.rootfs=/host'
+    ports:
+      - "9100:9100"
+    volumes:
+      - /:/host:ro,rslave
+    restart: unless-stopped
  
   prometheus:
     image: prom/prometheus:latest
@@ -72,6 +114,11 @@ services:
       - ./data/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
+    # Exporter가 먼저 시작되도록 의존성 추가
+    depends_on:
+      - mysql_exporter_master
+      - mysql_exporter_slave
+      - node_exporter
     
   grafana:
     image: grafana/grafana:latest
