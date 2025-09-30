@@ -74,10 +74,10 @@ services:
     container_name: mysql_exporter_master
     ports:
       - "9104:9104"
-    environment:
-      # 비밀번호를 직접 포함한 DATA_SOURCE_NAME 사용
-      # 호스트 이름은 'mysql-master' 서비스 이름을 사용합니다.
-      DATA_SOURCE_NAME: 'replica_user:replica_password@(mysql-master:3306)/'
+    command:
+      - "--mysqld.username=exporter:replica_password"
+      - "--mysqld.address=mysql:3306"
+
     depends_on:
       - mysql-master
     restart: unless-stopped
@@ -88,10 +88,9 @@ services:
     container_name: mysql_exporter_slave
     ports:
       - "9105:9104"
-    environment:
-      # 비밀번호를 직접 포함한 DATA_SOURCE_NAME 사용
-      # 호스트 이름은 'mysql-slave' 서비스 이름을 사용합니다.
-      DATA_SOURCE_NAME: 'replica_user:replica_password@(mysql-slave:3306)/'
+    command:
+      - "--mysqld.username=exporter:replica_password"
+      - "--mysqld.address=mysql:3306"
     depends_on:
       - mysql-slave
     restart: unless-stopped
