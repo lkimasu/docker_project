@@ -73,7 +73,7 @@ services:
     ports:
       - "9104:9104"
     command:
-      - "--mysql.username=exporter:password"
+      - "--mysqld.username=exporter:password"
       - "--mysqld.address=mysql-master:3306"
     depends_on:
       - mysql-master
