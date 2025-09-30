@@ -87,7 +87,7 @@ services:
     image: prom/mysqld-exporter:latest
     container_name: mysql_exporter_slave
     ports:
-      - "9105:9105"
+      - "9105:9104"
     command:
       - "--mysqld.username=exporter:replica_password"
       - "--mysqld.address=mysql:3307"

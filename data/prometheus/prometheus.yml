@@ -25,5 +25,5 @@ scrape_configs:
   # MySQL 컨테이너 모니터링
   - job_name: 'mysql'
     static_configs:
-      - targets: ['mysql_exporter_master:9104',mysql_exporter_slave:9105]
+      - targets: ['mysql_exporter_master:9104',mysql_exporter_slave:9104]
     metrics_path: /metrics
