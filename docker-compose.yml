@@ -72,9 +72,9 @@ services:
     container_name: mysql_exporter_master
     ports:
       - "9104:9104"
-    environment:
-      # 사용자 이름과 비밀번호를 명시적으로 분리
-      DATA_SOURCE_NAME: 'replica_user:replica_password@tcp(mysql-master:3306)/' 
+    command:
+      - "--mysql-master.username=exporter:password"
+      - "--mysqld.address=mysql-master:3306"
     depends_on:
       - mysql-master
     restart: unless-stopped
@@ -85,9 +85,9 @@ services:
     container_name: mysql_exporter_slave
     ports:
       - "9105:9104"
-    environment:
-      # 사용자 이름과 비밀번호를 명시적으로 분리
-      DATA_SOURCE_NAME: 'replica_user:replica_password@tcp(mysql-slave:3306)/'
+    command:
+      - "--mysqld.username=exporter:password"
+      - "--mysqld.address=mysql-slave:3306"
     depends_on:
       - mysql-slave
     restart: unless-stopped
