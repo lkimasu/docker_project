@@ -67,17 +67,15 @@ services:
   # 모니터링 Exporter 서비스 추가
   # ==================================
 
-  # 1. MySQL 지표 수집 (복제 상태, 쿼리 등)
-    # 1. MySQL 마스터 익스포터
   mysql_exporter_master:
     image: prom/mysqld-exporter:latest
     container_name: mysql_exporter_master
     ports:
       - "9104:9104"
-    command:
-      - "--mysqld.username=exporter:replica_password"
-      - "--mysqld.address=mysql:3306"
-
+    # 기존 command 블록을 제거하고 environment로 교체
+    environment:
+      # 호스트 이름을 'mysql-master'로 수정하고, 포맷을 표준 DATA_SOURCE_NAME으로 지정
+      DATA_SOURCE_NAME: 'replica_user:replica_password@(mysql-master:3306)/' 
     depends_on:
       - mysql-master
     restart: unless-stopped
@@ -88,9 +86,10 @@ services:
     container_name: mysql_exporter_slave
     ports:
       - "9105:9104"
-    command:
-      - "--mysqld.username=exporter:replica_password"
-      - "--mysqld.address=mysql:3307"
+    # 기존 command 블록을 제거하고 environment로 교체
+    environment:
+      # 호스트 이름을 'mysql-slave'로 수정하고, 내부 포트 3306 사용
+      DATA_SOURCE_NAME: 'replica_user:replica_password@(mysql-slave:3306)/'
     depends_on:
       - mysql-slave
     restart: unless-stopped
